@@ -9,7 +9,7 @@ async function startScraper(func) {
     setInterval(func, 10800000)
 }
 
-// startScraper(douban)
+startScraper(douban)
 
 app.listen(port, () => {
     console.log(`api.bookmeet.tk running at http://127.0.0.1:${port}`)
