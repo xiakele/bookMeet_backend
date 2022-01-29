@@ -1,10 +1,15 @@
 const express=require("express")
 const app=express()
-const fs=require("fs/promises")
+const fs=require('fs').promises
 const port=3030
 const douban=require("./scrapers/douban")
 
-setInterval(douban.start,60000)
+async function startScraper(func){
+    await func()
+    setInterval(func,60000)
+}
+
+startScraper(douban)
 
 app.listen(port,()=>{
     console.log(`api.bookmeet.tk running at 127.0.0.1:${port}`)
