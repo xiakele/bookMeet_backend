@@ -1,5 +1,5 @@
 const puppeteer=require("puppeteer")
-const fs=require("fs/promises")
+const fs=require("fs").promises
 async function getBooks(page){
     return page.$$eval(".chart-dashed-list>li",items=>items.map(item=>`{"name":"${item.querySelector(".clearfix>a").innerHTML}","img":"${item.querySelector(".media__img>a").href}"}`))
 }
