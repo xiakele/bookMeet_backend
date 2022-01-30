@@ -1,6 +1,7 @@
 const express = require("express")
 const app = express()
-const fs = require('fs').promises
+const fs = require("fs").promises
+const chalk = require("chalk")
 const port = 3030
 const douban = require("./scrapers/douban")
 const douban_literature = require("./scrapers/douban_literature")
@@ -9,20 +10,33 @@ const douban_science = require("./scrapers/douban_science")
 const dangdang = require("./scrapers/dangdang")
 const jd = require("./scrapers/jd")
 
-async function startScrapers(func) {
-    await douban()
-    await douban_literature()
-    await douban_novel()
-    await douban_science()
-    await dangdang()
-    await jd()
+async function checkUpdate(func, name) {
+    updateTime = JSON.parse(await fs.readFile(`./results/${name}.json`)).time
+    if (new Date().getTime() - updateTime < 10800000) {
+        console.log(`${name} is up to date`)
+    } else {
+        func()
+    }
 }
 
-startScrapers()
-setInterval(startScrapers, 10800000)
+async function startScrapers(func) {
+    start = new Date()
+    console.log(chalk.bgBlue(`start refreshing at ${start}`))
+    await checkUpdate(douban, "douban")
+    await checkUpdate(douban_literature, "douban_literature")
+    await checkUpdate(douban_novel, "douban_novel")
+    await checkUpdate(douban_science, "douban_science")
+    await checkUpdate(dangdang, "dangdang")
+    await checkUpdate(jd, "jd")
+    end = new Date()
+    console.log(chalk.bgGreen.black(`end refreshing at ${end}\ntime total: ${(end.getTime() - start.getTime()) / 1000} seconds\n`))
+}
+
+setInterval(startScrapers, 21600000)
 
 app.listen(port, () => {
-    console.log(`api.bookmeet.tk running at http://127.0.0.1:${port}`)
+    console.log(`api.bookmeet.tk running at http://127.0.0.1:${port}\n`)
+    startScrapers()
 })
 
 app.get("/", (req, res) => {
@@ -34,7 +48,7 @@ app.get("/douban", async (req, res) => {
     if (req.query.t) {
         switch (req.query.t) {
             case "literature":
-                data=JSON.parse(await fs.readFile("./results/douban_literature.json"))
+                data = JSON.parse(await fs.readFile("./results/douban_literature.json"))
                 break
             case "novel":
                 data = JSON.parse(await fs.readFile("./results/douban_novel.json"))
@@ -43,11 +57,11 @@ app.get("/douban", async (req, res) => {
                 data = JSON.parse(await fs.readFile("./results/douban_science.json"))
                 break
             default:
-                data=JSON.parse(await fs.readFile("./results/douban.json"))
+                data = JSON.parse(await fs.readFile("./results/douban.json"))
                 break
         }
     } else {
-        data=JSON.parse(await fs.readFile("./results/douban.json"))
+        data = JSON.parse(await fs.readFile("./results/douban.json"))
     }
     if (req.query.n) {
         data.data = data.data.slice(0, parseInt(req.query.n))
