@@ -15,13 +15,13 @@ module.exports = async function start() {
     const browser = await puppeteer.launch()
     const page = await browser.newPage()
     let books = []
-    for (let i = 1; i <= 15; i++) {
-        await page.goto(`https://book.douban.com/latest?tag=%E5%85%A8%E9%83%A8&p=${i}`)
+    for (let i = 1; i <= 3; i++) {
+        await page.goto(`https://book.douban.com/latest?subcat=%E6%96%87%E5%AD%A6&p=${i}`)
         books = books.concat(await getBooks(page))
     }
     refreshTime = new Date().getTime()
-    books = { "category": "douban", "time": refreshTime, "data": books }
-    await fs.writeFile("./results/douban.json", JSON.stringify(books))
-    console.log(`douban refreshed at ${new Date(refreshTime)}`)
+    books = { "category": "douban_literature", "time": refreshTime, "data": books }
+    await fs.writeFile("./results/douban_literature.json", JSON.stringify(books))
+    console.log(`douban_literature refreshed at ${new Date(refreshTime)}`)
     await browser.close()
 }
