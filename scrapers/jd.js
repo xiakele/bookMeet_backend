@@ -20,9 +20,9 @@ module.exports = async function start() {
         await page.click(`.pageGination>ul>li[data-index='${i}']`)
         books = books.concat(await getBooks(page))
     }
-    refreshTime = new Date().getTime()
-    books = { "category": "jd", "time": refreshTime, "data": books }
+    updateTime = new Date().getTime()
+    books = { "category": "jd", "time": updateTime, "data": books }
     await fs.writeFile("./results/jd.json", JSON.stringify(books))
-    console.log(`jd refreshed at ${new Date(refreshTime)}`)
+    console.log(`jd updated at ${new Date(updateTime)}`)
     await browser.close()
 }

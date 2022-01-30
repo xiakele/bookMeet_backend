@@ -9,21 +9,37 @@ const douban_novel = require("./scrapers/douban_novel")
 const douban_science = require("./scrapers/douban_science")
 const dangdang = require("./scrapers/dangdang")
 const jd = require("./scrapers/jd")
+let success = 0, failed = 0
 
 async function checkUpdate(func, name) {
     try {
         updateTime = JSON.parse(await fs.readFile(`./results/${name}.json`)).time
         if (new Date().getTime() - updateTime < 10800000) {
             console.log(`${name} is up to date`)
+            success += 1
         } else {
-            await func()
+            try {
+                await func()
+                success+=1
+            } catch(err) {
+                console.log(chalk.bgRed(`${name} update failed\n${err}`))
+                failed+=1
+            }
         }
     } catch {
-        await func()
+        try {
+            await func()
+            success += 1
+        } catch(err) {
+            console.log(chalk.bgRed(`${name} update failed\n${err}`))
+            failed += 1
+        }
     }
 }
 
 async function startScrapers(func) {
+    success = 0
+    failed = 0
     try {
         await fs.stat("./results")
     } catch {
@@ -31,7 +47,7 @@ async function startScrapers(func) {
         await fs.mkdir("./results")
     }
     start = new Date()
-    console.log(chalk.bgBlue(`start refreshing at ${start}`))
+    console.log(chalk.bgBlue(`start updating at ${start}`))
     await checkUpdate(douban, "douban")
     await checkUpdate(douban_literature, "douban_literature")
     await checkUpdate(douban_novel, "douban_novel")
@@ -39,12 +55,16 @@ async function startScrapers(func) {
     await checkUpdate(dangdang, "dangdang")
     await checkUpdate(jd, "jd")
     end = new Date()
-    console.log(chalk.bgGreen.black(`end refreshing at ${end}\ntime total: ${(end.getTime() - start.getTime()) / 1000} seconds\n`))
+    if (failed) {
+        console.log(chalk.bgYellow.black(`end updating at ${end}\nsuccess: ${success}, failed:${failed}\ntime total: ${(end.getTime() - start.getTime()) / 1000} seconds\n`))
+    } else {
+        console.log(chalk.bgGreen.black(`end updating at ${end}\nsuccess: ${success}, failed:${failed}\ntime total: ${(end.getTime() - start.getTime()) / 1000} seconds\n`))
+    }
 }
 
 setInterval(startScrapers, 21600000)
 
-app.listen(port,() => {
+app.listen(port, () => {
     console.log(`api.bookmeet.tk running at http://127.0.0.1:${port}\n`)
     startScrapers()
 })
@@ -75,28 +95,22 @@ app.get("/douban", async (req, res) => {
     }
     if (req.query.n) {
         data.data = data.data.slice(0, parseInt(req.query.n))
-        res.json(data)
-    } else {
-        res.json(data)
     }
+    res.json(data)
 })
 
 app.get("/dangdang", async (req, res) => {
     data = JSON.parse(await fs.readFile("./results/dangdang.json"))
     if (req.query.n) {
         data.data = data.data.slice(0, parseInt(req.query.n))
-        res.json(data)
-    } else {
-        res.json(data)
     }
+    res.json(data)
 })
 
 app.get("/jd", async (req, res) => {
     data = JSON.parse(await fs.readFile("./results/jd.json"))
     if (req.query.n) {
         data.data = data.data.slice(0, parseInt(req.query.n))
-        res.json(data)
-    } else {
-        res.json(data)
     }
+    res.json(data)
 })

@@ -19,9 +19,9 @@ module.exports = async function start() {
         await page.goto(`http://bang.dangdang.com/books/newhotsales/1-${i}`)
         books = books.concat(await getBooks(page))
     }
-    refreshTime = new Date().getTime()
-    books = { "category": "dangdang", "time": refreshTime, "data": books }
+    updateTime = new Date().getTime()
+    books = { "category": "dangdang", "time": updateTime, "data": books }
     await fs.writeFile("./results/dangdang.json", JSON.stringify(books))
-    console.log(`dangdang refreshed at ${new Date(refreshTime)}`)
+    console.log(`dangdang updated at ${new Date(updateTime)}`)
     await browser.close()
 }

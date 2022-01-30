@@ -19,9 +19,9 @@ module.exports = async function start() {
         await page.goto(`https://book.douban.com/latest?subcat=%E5%B0%8F%E8%AF%B4&p=${i}`)
         books = books.concat(await getBooks(page))
     }
-    refreshTime = new Date().getTime()
-    books = { "category": "douban_novel", "time": refreshTime, "data": books }
+    updateTime = new Date().getTime()
+    books = { "category": "douban_novel", "time": updateTime, "data": books }
     await fs.writeFile("./results/douban_novel.json", JSON.stringify(books))
-    console.log(`douban_novel refreshed at ${new Date(refreshTime)}`)
+    console.log(`douban_novel updated at ${new Date(updateTime)}`)
     await browser.close()
 }
