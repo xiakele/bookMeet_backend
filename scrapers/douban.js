@@ -4,9 +4,10 @@ async function getBooks(page) {
     return page.$$eval(".chart-dashed-list>li", items => items.map(item => {
         const name = item.querySelector(".clearfix>a").innerHTML
         const author = item.querySelector(".subject-abstract").innerHTML.trim().split(" / ")[0]
-        const img = item.querySelector(".media__img>a").href
+        const img = item.querySelector(".subject-cover").src
         const rate = Number(item.querySelector(".font-small").innerHTML)
-        const json = { "name": name, "author": author, "img": img, "rate": rate }
+        const url = item.querySelector(".media__img>a").href
+        const json = { "name": name, "author": author, "img": img, "rate": rate, "url": url }
         return json
     }))
 }
