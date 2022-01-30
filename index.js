@@ -7,6 +7,7 @@ const douban_literature = require("./scrapers/douban_literature")
 const douban_novel = require("./scrapers/douban_novel")
 const douban_science = require("./scrapers/douban_science")
 const dangdang = require("./scrapers/dangdang")
+const jd = require("./scrapers/jd")
 
 async function startScrapers(func) {
     await douban()
@@ -14,6 +15,7 @@ async function startScrapers(func) {
     await douban_novel()
     await douban_science()
     await dangdang()
+    await jd()
 }
 
 startScrapers()
@@ -57,6 +59,16 @@ app.get("/douban", async (req, res) => {
 
 app.get("/dangdang", async (req, res) => {
     data = JSON.parse(await fs.readFile("./results/dangdang.json"))
+    if (req.query.n) {
+        data.data = data.data.slice(0, parseInt(req.query.n))
+        res.json(data)
+    } else {
+        res.json(data)
+    }
+})
+
+app.get("/jd", async (req, res) => {
+    data = JSON.parse(await fs.readFile("./results/jd.json"))
     if (req.query.n) {
         data.data = data.data.slice(0, parseInt(req.query.n))
         res.json(data)
