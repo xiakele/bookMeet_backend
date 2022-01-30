@@ -6,12 +6,14 @@ const douban = require("./scrapers/douban")
 const douban_literature = require("./scrapers/douban_literature")
 const douban_novel = require("./scrapers/douban_novel")
 const douban_science = require("./scrapers/douban_science")
+const dangdang = require("./scrapers/dangdang")
 
 async function startScrapers(func) {
     await douban()
     await douban_literature()
     await douban_novel()
     await douban_science()
+    await dangdang()
 }
 
 startScrapers()
@@ -20,9 +22,11 @@ setInterval(startScrapers, 10800000)
 app.listen(port, () => {
     console.log(`api.bookmeet.tk running at http://127.0.0.1:${port}`)
 })
+
 app.get("/", (req, res) => {
     res.send("Welcome to api.bookmeet.tk!")
 })
+
 app.get("/douban", async (req, res) => {
     let data
     if (req.query.t) {
@@ -43,6 +47,16 @@ app.get("/douban", async (req, res) => {
     } else {
         data=JSON.parse(await fs.readFile("./results/douban.json"))
     }
+    if (req.query.n) {
+        data.data = data.data.slice(0, parseInt(req.query.n))
+        res.json(data)
+    } else {
+        res.json(data)
+    }
+})
+
+app.get("/dangdang", async (req, res) => {
+    data = JSON.parse(await fs.readFile("./results/dangdang.json"))
     if (req.query.n) {
         data.data = data.data.slice(0, parseInt(req.query.n))
         res.json(data)
