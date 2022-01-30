@@ -4,10 +4,14 @@ const fs = require('fs').promises
 const port = 3030
 const douban = require("./scrapers/douban")
 const douban_literature = require("./scrapers/douban_literature")
+const douban_novel = require("./scrapers/douban_novel")
+const douban_science = require("./scrapers/douban_science")
 
 async function startScrapers(func) {
     await douban()
     await douban_literature()
+    await douban_novel()
+    await douban_science()
 }
 
 startScrapers()
@@ -25,6 +29,12 @@ app.get("/douban", async (req, res) => {
         switch (req.query.t) {
             case "literature":
                 data=JSON.parse(await fs.readFile("./results/douban_literature.json"))
+                break
+            case "novel":
+                data = JSON.parse(await fs.readFile("./results/douban_novel.json"))
+                break
+            case "science":
+                data = JSON.parse(await fs.readFile("./results/douban_science.json"))
                 break
             default:
                 data=JSON.parse(await fs.readFile("./results/douban.json"))
