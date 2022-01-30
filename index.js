@@ -56,7 +56,7 @@ async function startScrapers(func) {
     await checkUpdate(jd, "jd")
     end = new Date()
     if (failed) {
-        console.log(chalk.bgYellow.black(`end updating at ${end}\nsuccess: ${success}, failed:${failed}\ntime total: ${(end.getTime() - start.getTime()) / 1000} seconds\n`))
+        console.log(chalk.bgYellow.black(`end updating with errors at ${end}\nsuccess: ${success}, failed:${failed}\ntime total: ${(end.getTime() - start.getTime()) / 1000} seconds\n`))
     } else {
         console.log(chalk.bgGreen.black(`end updating at ${end}\nsuccess: ${success}, failed:${failed}\ntime total: ${(end.getTime() - start.getTime()) / 1000} seconds\n`))
     }

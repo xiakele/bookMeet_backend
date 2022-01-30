@@ -1,11 +1,16 @@
 const puppeteer = require("puppeteer")
 const fs = require("fs").promises
 async function getBooks(page) {
+    if (! await page.$(".bang_list>li")) {
+        books = { "category": "dangdang", "time": -1, "data": [] }
+        await fs.writeFile("./results/dangdang.json", JSON.stringify(books))
+        throw new Error("cannot find target element")
+    }
     return page.$$eval(".bang_list>li", items => items.map(item => {
         const name = item.querySelector(".pic>a>img").title.split("（")[0]
         const author = item.querySelector(".publisher_info>a").innerHTML
         const img = item.querySelector(".pic>a>img").src
-        const rate = Number(parseFloat(item.querySelector(".tuijian").innerHTML.split("%")[0])/10)
+        const rate = Number(parseFloat(item.querySelector(".tuijian").innerHTML.split("%")[0]) / 10)
         const url = item.querySelector(".pic>a").href
         const json = { "name": name, "author": author, "img": img, "rate": rate, "url": url }
         return json
