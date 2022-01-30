@@ -5,7 +5,7 @@ async function getBooks(page) {
         const name = item.querySelector(".pic>a>img").title.split("（")[0]
         const author = item.querySelector(".publisher_info>a").innerHTML
         const img = item.querySelector(".pic>a>img").src
-        const rate = Number(parseFloat(item.querySelector(".tuijian").innerHTML.split("%")[0])/20)
+        const rate = Number(parseFloat(item.querySelector(".tuijian").innerHTML.split("%")[0])/10)
         const url = item.querySelector(".pic>a").href
         const json = { "name": name, "author": author, "img": img, "rate": rate, "url": url }
         return json
