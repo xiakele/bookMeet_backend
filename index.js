@@ -11,15 +11,25 @@ const dangdang = require("./scrapers/dangdang")
 const jd = require("./scrapers/jd")
 
 async function checkUpdate(func, name) {
-    updateTime = JSON.parse(await fs.readFile(`./results/${name}.json`)).time
-    if (new Date().getTime() - updateTime < 10800000) {
-        console.log(`${name} is up to date`)
-    } else {
-        func()
+    try {
+        updateTime = JSON.parse(await fs.readFile(`./results/${name}.json`)).time
+        if (new Date().getTime() - updateTime < 10800000) {
+            console.log(`${name} is up to date`)
+        } else {
+            await func()
+        }
+    } catch {
+        await func()
     }
 }
 
 async function startScrapers(func) {
+    try {
+        await fs.stat("./results")
+    } catch {
+        console.log(chalk.bgYellow.black("cannot find \"results\" directory\ncreating it..."))
+        await fs.mkdir("./results")
+    }
     start = new Date()
     console.log(chalk.bgBlue(`start refreshing at ${start}`))
     await checkUpdate(douban, "douban")
@@ -34,7 +44,7 @@ async function startScrapers(func) {
 
 setInterval(startScrapers, 21600000)
 
-app.listen(port, () => {
+app.listen(port,() => {
     console.log(`api.bookmeet.tk running at http://127.0.0.1:${port}\n`)
     startScrapers()
 })
