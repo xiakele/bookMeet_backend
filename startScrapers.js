@@ -25,6 +25,7 @@ async function checkUpdate(func, name) {
         }
     } catch {
         try {
+            await fs.writeFile(`./results/${name}.json`, JSON.stringify({ "category": name, "time": -1, "data": [] }))
             await func()
             success += 1
         } catch (err) {
@@ -55,6 +56,6 @@ module.exports=async function startScrapers() {
     if (failed) {
         console.log(chalk.bgYellow.black(`end updating with errors at ${end}\nsuccess: ${success}, failed: ${failed}\ntime total: ${(end.getTime() - start.getTime()) / 1000} seconds\n`))
     } else {
-        console.log(chalk.bgGreen.black(`end updating at ${end}\nsuccess: ${success}, failed: ${failed}\ntime total: ${(end.getTime() - start.getTime()) / 1000} seconds\n`))
+        console.log(chalk.bgGreen.black(`end updating successfully at ${end}\ntime total: ${(end.getTime() - start.getTime()) / 1000} seconds\n`))
     }
 }

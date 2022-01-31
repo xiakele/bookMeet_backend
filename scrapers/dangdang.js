@@ -2,8 +2,6 @@ const puppeteer = require("puppeteer")
 const fs = require("fs").promises
 async function getBooks(page) {
     if (! await page.$(".bang_list>li")) {
-        books = { "category": "dangdang", "time": -1, "data": [] }
-        await fs.writeFile("./results/dangdang.json", JSON.stringify(books))
         throw new Error("cannot find target element")
     }
     return page.$$eval(".bang_list>li", items => items.map(item => {
