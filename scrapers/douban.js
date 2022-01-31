@@ -25,6 +25,5 @@ module.exports = async function start() {
     updateTime = new Date().getTime()
     books = { "category": "douban", "time": updateTime, "data": books }
     await fs.writeFile("./results/douban.json", JSON.stringify(books))
-    console.log(`douban updated at ${new Date(updateTime)}`)
     await browser.close()
 }
