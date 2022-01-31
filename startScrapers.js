@@ -17,7 +17,7 @@ async function checkUpdate(func, name) {
         } else {
             try {
                 await func()
-                console.log(chalk.green(`${name} updated at ${new Date()}`))
+                console.log(chalk.green(`${name} updated successfully at ${new Date()}`))
                 success += 1
             } catch (err) {
                 if (tried) {
@@ -35,7 +35,7 @@ async function checkUpdate(func, name) {
         try {
             await fs.writeFile(`./results/${name}.json`, JSON.stringify({ "category": name, "time": -1, "data": [] }))
             await func()
-            console.log(chalk.green(`${name} updated at ${new Date()}`))
+            console.log(chalk.green(`${name} updated successfully at ${new Date()}`))
             success += 1
         } catch (err) {
             if (tried) {
