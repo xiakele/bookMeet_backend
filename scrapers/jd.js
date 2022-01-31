@@ -25,6 +25,6 @@ module.exports = async function start() {
     }
     updateTime = new Date().getTime()
     books = { "category": "jd", "time": updateTime, "data": books }
-    await fs.writeFile("./results/jd.json", JSON.stringify(books))
+    await fs.writeFile(`${__dirname}/../results/jd.json`, JSON.stringify(books))
     await browser.close()
 }

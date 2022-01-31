@@ -2,8 +2,7 @@ const express = require("express")
 const app = express()
 const fs = require("fs").promises
 const port = 3030
-const startScrapers=require("./startScrapers")
-
+const startScrapers = require(`${__dirname}/startScrapers`)
 
 app.listen(port, () => {
     console.log(`https://api.bookmeet.tk running at http://127.0.0.1:${port}\n`)
@@ -20,20 +19,20 @@ app.get("/douban", async (req, res) => {
     if (req.query.t) {
         switch (req.query.t) {
             case "literature":
-                data = JSON.parse(await fs.readFile("./results/douban_literature.json"))
+                data = JSON.parse(await fs.readFile(`${__dirname}/results/douban_literature.json`))
                 break
             case "novel":
-                data = JSON.parse(await fs.readFile("./results/douban_novel.json"))
+                data = JSON.parse(await fs.readFile(`${__dirname}/results/douban_novel.json`))
                 break
             case "science":
-                data = JSON.parse(await fs.readFile("./results/douban_science.json"))
+                data = JSON.parse(await fs.readFile(`${__dirname}/results/douban_science.json`))
                 break
             default:
-                data = JSON.parse(await fs.readFile("./results/douban.json"))
+                data = JSON.parse(await fs.readFile(`${__dirname}/results/douban.json`))
                 break
         }
     } else {
-        data = JSON.parse(await fs.readFile("./results/douban.json"))
+        data = JSON.parse(await fs.readFile(`${__dirname}/results/douban.json`))
     }
     if (req.query.n) {
         data.data = data.data.slice(0, parseInt(req.query.n))
@@ -42,7 +41,7 @@ app.get("/douban", async (req, res) => {
 })
 
 app.get("/dangdang", async (req, res) => {
-    data = JSON.parse(await fs.readFile("./results/dangdang.json"))
+    data = JSON.parse(await fs.readFile(`${__dirname}/results/dangdang.json`))
     if (req.query.n) {
         data.data = data.data.slice(0, parseInt(req.query.n))
     }
@@ -50,7 +49,7 @@ app.get("/dangdang", async (req, res) => {
 })
 
 app.get("/jd", async (req, res) => {
-    data = JSON.parse(await fs.readFile("./results/jd.json"))
+    data = JSON.parse(await fs.readFile(`${__dirname}/results/jd.json`))
     if (req.query.n) {
         data.data = data.data.slice(0, parseInt(req.query.n))
     }
