@@ -19,10 +19,12 @@ module.exports = async function start() {
     const page = await browser.newPage()
     try {
         let books = []
-        for (let i = 1; i <= 15; i++) {
-            await page.goto(`https://book.douban.com/latest?tag=%E5%85%A8%E9%83%A8&p=${i}`)
+        await page.goto("https://book.douban.com/latest?tag=%E5%85%A8%E9%83%A8")
+        do {
             books = books.concat(await getBooks(page))
-        }
+            await page.click(".next")
+            await page.waitForNetworkIdle()
+        } while (await page.$eval(".next", item => item.childElementCount))
         updateTime = new Date().getTime()
         books = { "category": "douban", "time": updateTime, "data": books }
         await fs.writeFile(`${__dirname}/../results/douban.json`, JSON.stringify(books))

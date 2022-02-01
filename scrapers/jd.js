@@ -22,6 +22,7 @@ module.exports = async function start() {
         await page.goto("https://book.jd.com/booktop/0-0-0.html?category=1713-0-0-0-10002-1")
         for (let i = 1; i <= 5; i++) {
             await page.click(`.pageGination>ul>li[data-index='${i}']`)
+            await page.waitForNetworkIdle()
             books = books.concat(await getBooks(page))
         }
         updateTime = new Date().getTime()
