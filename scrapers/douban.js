@@ -17,13 +17,18 @@ async function getBooks(page) {
 module.exports = async function start() {
     const browser = await puppeteer.launch()
     const page = await browser.newPage()
-    let books = []
-    for (let i = 1; i <= 15; i++) {
-        await page.goto(`https://book.douban.com/latest?tag=%E5%85%A8%E9%83%A8&p=${i}`)
-        books = books.concat(await getBooks(page))
+    try {
+        let books = []
+        for (let i = 1; i <= 15; i++) {
+            await page.goto(`https://book.douban.com/latest?tag=%E5%85%A8%E9%83%A8&p=${i}`)
+            books = books.concat(await getBooks(page))
+        }
+        updateTime = new Date().getTime()
+        books = { "category": "douban", "time": updateTime, "data": books }
+        await fs.writeFile(`${__dirname}/../results/douban.json`, JSON.stringify(books))
+    } catch (err) {
+        throw err
+    } finally {
+        await browser.close()
     }
-    updateTime = new Date().getTime()
-    books = { "category": "douban", "time": updateTime, "data": books }
-    await fs.writeFile(`${__dirname}/../results/douban.json`, JSON.stringify(books))
-    await browser.close()
 }

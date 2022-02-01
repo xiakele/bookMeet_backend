@@ -17,14 +17,19 @@ async function getBooks(page) {
 module.exports = async function start() {
     const browser = await puppeteer.launch()
     const page = await browser.newPage()
-    let books = []
-    await page.goto("https://book.jd.com/booktop/0-0-0.html?category=1713-0-0-0-10002-1")
-    for (let i = 1; i <= 5; i++) {
-        await page.click(`.pageGination>ul>li[data-index='${i}']`)
-        books = books.concat(await getBooks(page))
+    try {
+        let books = []
+        await page.goto("https://book.jd.com/booktop/0-0-0.html?category=1713-0-0-0-10002-1")
+        for (let i = 1; i <= 5; i++) {
+            await page.click(`.pageGination>ul>li[data-index='${i}']`)
+            books = books.concat(await getBooks(page))
+        }
+        updateTime = new Date().getTime()
+        books = { "category": "jd", "time": updateTime, "data": books }
+        await fs.writeFile(`${__dirname}/../results/jd.json`, JSON.stringify(books))
+    } catch (err) {
+        throw err
+    } finally {
+        await browser.close()
     }
-    updateTime = new Date().getTime()
-    books = { "category": "jd", "time": updateTime, "data": books }
-    await fs.writeFile(`${__dirname}/../results/jd.json`, JSON.stringify(books))
-    await browser.close()
 }

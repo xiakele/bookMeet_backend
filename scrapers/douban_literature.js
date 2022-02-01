@@ -1,6 +1,5 @@
 const puppeteer = require("puppeteer")
 const fs = require("fs").promises
-
 async function getBooks(page) {
     if (! await page.$(".chart-dashed-list>li")) {
         throw new Error("cannot find target element")
@@ -18,13 +17,18 @@ async function getBooks(page) {
 module.exports = async function start() {
     const browser = await puppeteer.launch()
     const page = await browser.newPage()
-    let books = []
-    for (let i = 1; i <= 3; i++) {
-        await page.goto(`https://book.douban.com/latest?subcat=%E6%96%87%E5%AD%A6&p=${i}`)
-        books = books.concat(await getBooks(page))
+    try {
+        let books = []
+        for (let i = 1; i <= 3; i++) {
+            await page.goto(`https://book.douban.com/latest?subcat=%E6%96%87%E5%AD%A6&p=${i}`)
+            books = books.concat(await getBooks(page))
+        }
+        updateTime = new Date().getTime()
+        books = { "category": "douban_literature", "time": updateTime, "data": books }
+        await fs.writeFile(`${__dirname}/../results/douban_literature.json`, JSON.stringify(books))
+    } catch (err) {
+        throw err
+    } finally {
+        await browser.close()
     }
-    updateTime = new Date().getTime()
-    books = { "category": "douban_literature", "time": updateTime, "data": books }
-    await fs.writeFile(`${__dirname}/../results/douban_literature.json`, JSON.stringify(books))
-    await browser.close()
 }

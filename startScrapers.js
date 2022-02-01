@@ -14,38 +14,24 @@ async function checkUpdate(func, name) {
         if (new Date().getTime() - updateTime < 10800000) {
             console.log(chalk.green(`${name} is up to date`))
             success += 1
-        } else {
-            try {
-                await func()
-                console.log(chalk.green(`${name} updated successfully at ${new Date()}`))
-                success += 1
-            } catch (err) {
-                if (tried) {
-                    console.log(chalk.bgRed(`${name} update failed\n${err}`))
-                    tried = false
-                    failed += 1
-                } else {
-                    console.log(chalk.yellow(`${name} update failed\n${err}\nretrying...`))
-                    tried = true
-                    await checkUpdate(func, name)
-                }
-            }
+            return
         }
-    } catch {
-        try {
-            await fs.writeFile(`${__dirname}/results/${name}.json`, JSON.stringify({ "category": name, "time": -1, "data": [] }))
-            await func()
-            console.log(chalk.green(`${name} updated successfully at ${new Date()}`))
-            success += 1
-        } catch (err) {
-            if (tried) {
-                console.log(chalk.bgRed(`${name} update failed\n${err}`))
-                failed += 1
-            } else {
-                console.log(chalk.yellow(`${name} update failed\n${err}\nretrying...`))
-                tried = true
-                await checkUpdate(func, name)
-            }
+    }catch {
+        await fs.writeFile(`${__dirname}/results/${name}.json`, JSON.stringify({ "category": name, "time": -1, "data": [] }))
+    }
+    try {
+        await func()
+        console.log(chalk.green(`${name} updated successfully at ${new Date()}`))
+        success += 1
+    } catch (err) {
+        if (tried) {
+            console.log(chalk.bgRed(`${name} update failed\n${err}`))
+            tried=false
+            failed += 1
+        } else {
+            console.log(chalk.yellow(`${name} update failed\n${err}\nretrying...`))
+            tried = true
+            await checkUpdate(func, name)
         }
     }
 }
