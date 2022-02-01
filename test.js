@@ -1,3 +1,3 @@
-const douban=require("./scrapers/douban")
-const jd=require("./scrapers/jd")
-douban()
+let test = "waha"
+// console.log(Number(fsfs))
+console.log((() =>Number(fsf))())

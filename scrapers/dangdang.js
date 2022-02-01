@@ -19,7 +19,9 @@ module.exports = async function start() {
     const page = await browser.newPage()
     try {
         let books = []
-        for (let i = 1; i <= 25; i++) {
+        await page.goto(`http://bang.dangdang.com/books/newhotsales/1-1`)
+        const pageCnt = await page.$eval(".data > .or+span", data => Number(data.innerHTML.slice(1)))
+        for (let i = 1; i <= pageCnt; i++) {
             await page.goto(`http://bang.dangdang.com/books/newhotsales/1-${i}`)
             books = books.concat(await getBooks(page))
         }

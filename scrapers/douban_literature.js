@@ -20,11 +20,11 @@ module.exports = async function start() {
     try {
         let books = []
         await page.goto("https://book.douban.com/latest?subcat=%E6%96%87%E5%AD%A6")
-        do {
+        const pageCnt = await page.$eval(".paginator>:nth-last-child(2)", item => Number(item.innerHTML))
+        for (let i = 1; i <= pageCnt; i++) {
+            await page.goto(`https://book.douban.com/latest?subcat=%E6%96%87%E5%AD%A6p=${i}`)
             books = books.concat(await getBooks(page))
-            await page.click(".next")
-            await page.waitForNetworkIdle()
-        } while (await page.$eval(".next", item => item.childElementCount))
+        }
         updateTime = new Date().getTime()
         books = { "category": "douban_literature", "time": updateTime, "data": books }
         await fs.writeFile(`${__dirname}/../results/douban_literature.json`, JSON.stringify(books))
