@@ -1,31 +1,25 @@
 const puppeteer = require("puppeteer")
 const fs = require("fs").promises
 async function getBooks(page) {
-    if (! await page.$(".main-content-list>div")) {
-        throw new Error("cannot find target element")
-    }
-    return page.$$eval(".main-content-list>div", items => items.map(item => {
-        const name = item.querySelector(".main-list-content-right>div>p[title]").title
-        const author = item.querySelector(".main-list-content-right>div a[href*='writer']").innerHTML
-        const img = item.querySelector(".main-list-content-left img").src
-        const rate = 0
-        const url = item.querySelector(".main-list-content-left a").href
-        const json = { "name": name, "author": author, "img": img, "rate": rate, "url": url }
-        return json
-    }))
+    return await page.$eval("pre", item => {
+        let data = JSON.parse(item.innerHTML).data.books
+        return data.map(item => {
+            const name = item.bookName
+            const author = item.authors.length?item.authors[0].name:""
+            const img = item.coverUrl
+            const rate = 0
+            const url="https://item.jd.com/"+item.bookId+".html"
+            const json = { "name": name, "author": author, "img": img, "rate": rate, "url": url }
+            return json
+        })
+    })
 }
 module.exports = async function start() {
     const browser = await puppeteer.launch()
     const page = await browser.newPage()
     try {
-        let books = []
-        await page.goto("https://book.jd.com/booktop/0-0-0.html?category=1713-0-0-0-10002-1")
-        const pageCnt = await page.$eval("#pageGination1>ul>:nth-last-child(2)", item => Number(item.innerHTML))
-        for (let i = 1; i <= pageCnt; i++) {
-            await page.click(`.pageGination>ul>li[data-index='${i}']`)
-            await page.waitForNetworkIdle()
-            books = books.concat(await getBooks(page))
-        }
+        await page.goto("https://gw-e.jd.com/client.action?body=%7B%22moduleType%22:1,%22page%22:1,%22pageSize%22:100,%22scopeType%22:1%7D&functionId=bookRank")
+        let books = await getBooks(page)
         updateTime = new Date().getTime()
         books = { "category": "jd", "time": updateTime, "data": books }
         await fs.writeFile(`${__dirname}/../results/jd.json`, JSON.stringify(books))

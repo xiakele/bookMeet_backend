@@ -20,7 +20,12 @@ module.exports = async function start() {
     try {
         let books = []
         await page.goto(`https://book.douban.com/latest?subcat=%E7%A7%91%E5%AD%A6%E6%96%B0%E7%9F%A5`)
-        const pageCnt = await page.$eval(".paginator>:nth-last-child(2)", item => Number(item.innerHTML))
+        let pageCnt = 1
+        try {
+            pageCnt = await page.$eval(".paginator>:nth-last-child(2)", item => Number(item.innerHTML))
+        } catch {
+            pageCnt = 1
+        }
         for (let i = 1; i <= pageCnt; i++) {
             await page.goto(`https://book.douban.com/latest?subcat=%E7%A7%91%E5%AD%A6%E6%96%B0%E7%9F%A5&p=${i}`, { waitUntil: "domcontentloaded" })
             books = books.concat(await getBooks(page))
