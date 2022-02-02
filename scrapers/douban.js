@@ -22,7 +22,7 @@ module.exports = async function start() {
         await page.goto(`https://book.douban.com/latest?tag=%E5%85%A8%E9%83%A8`)
         const pageCnt = await page.$eval(".paginator>:nth-last-child(2)", item => Number(item.innerHTML))
         for (let i = 1; i <= pageCnt; i++) {
-            await page.goto(`https://book.douban.com/latest?tag=%E5%85%A8%E9%83%A8&p=${i}`)
+            await page.goto(`https://book.douban.com/latest?tag=%E5%85%A8%E9%83%A8&p=${i}`, { waitUntil: "domcontentloaded" })
             books = books.concat(await getBooks(page))
         }
         updateTime = new Date().getTime()

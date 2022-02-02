@@ -66,3 +66,11 @@ app.get("/jd", async (req, res) => {
     }
     res.json(data)
 })
+
+app.get("/bookschina", async (req, res) => {
+    data = await readJSON(`${__dirname}/results/booksChina.json`)
+    if (req.query.n) {
+        data.data = data.data.slice(0, parseInt(req.query.n))
+    }
+    res.json(data)
+})

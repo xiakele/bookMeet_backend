@@ -22,7 +22,7 @@ module.exports = async function start() {
         await page.goto(`http://bang.dangdang.com/books/newhotsales/1-1`)
         const pageCnt = await page.$eval(".data > .or+span", data => Number(data.innerHTML.slice(1)))
         for (let i = 1; i <= pageCnt; i++) {
-            await page.goto(`http://bang.dangdang.com/books/newhotsales/1-${i}`)
+            await page.goto(`http://bang.dangdang.com/books/newhotsales/1-${i}`, { waitUntil: "domcontentloaded" })
             books = books.concat(await getBooks(page))
         }
         updateTime = new Date().getTime()

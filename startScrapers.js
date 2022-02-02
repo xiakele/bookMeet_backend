@@ -6,6 +6,7 @@ const douban_novel = require(`${__dirname}/scrapers/douban_novel`)
 const douban_science = require(`${__dirname}/scrapers/douban_science`)
 const dangdang = require(`${__dirname}/scrapers/dangdang`)
 const jd = require(`${__dirname}/scrapers/jd`)
+const booksChina = require(`${__dirname}/scrapers/booksChina`)
 let success = 0, failed = 0, tried = false
 
 async function checkUpdate(func, name) {
@@ -53,6 +54,7 @@ module.exports = async function startScrapers() {
     await checkUpdate(douban_science, "douban_science")
     await checkUpdate(dangdang, "dangdang")
     await checkUpdate(jd, "jd")
+    await checkUpdate(booksChina,"booksChina")
     end = new Date()
     if (failed) {
         console.log(chalk.bgYellow.black(`end updating with errors at ${end}\nsuccess: ${success}, failed: ${failed}\ntime total: ${(end.getTime() - start.getTime()) / 1000} seconds\n`))
