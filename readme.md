@@ -2,24 +2,26 @@
 
 ## 简介
 
-通过Node.js的puppeteer库爬取并解析相关数据，以JSON的格式传给前端
+通过Node.js的puppeteer库爬取并解析相关数据，以JSON的格式传递给前端
 
 ## 支持的数据源
 
-|     数据源     |    url    |
-| :------------: | :-------: |
-|  豆瓣新书速递  |  /douban  |
-| 当当新书热卖榜 | /dangdang |
+|      数据源      |     url     |
+| :--------------: | :---------: |
+|   豆瓣新书速递   |   /douban   |
+|  当当新书热卖榜  |  /dangdang  |
+|  京东图书销量榜  |     /jd     |
+| 中图网图书畅销榜 | /bookschina |
 
 ## 支持的参数
 
-### 类型 (t)
+### 类型 (c)
 
 |         数据源          |         url          |
 | :---------------------: | :------------------: |
-|   豆瓣新书速递 - 文学   | /douban?t=literature |
-|   豆瓣新书速递 - 小说   |   /douban?t=novel    |
-| 豆瓣新书速递 - 科学新知 |  /douban?t=science   |
+|   豆瓣新书速递 - 文学   | /douban?c=literature |
+|   豆瓣新书速递 - 小说   |   /douban?c=novel    |
+| 豆瓣新书速递 - 科学新知 |  /douban?c=science   |
 
 ### 数量 (n)
 
@@ -27,7 +29,7 @@
 
 ### 例子
 
-获取当当新书热卖榜的前5本：/dangdang?n=5
+获取中图网图书畅销榜的前5本：/bookschina?n=5
 
 获取豆瓣新书速递 - 文学的前10本：/douban?t=literature&n=10 或 /douban?n=10&t=literature
 

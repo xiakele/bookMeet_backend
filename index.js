@@ -27,8 +27,8 @@ app.get("/", (req, res) => {
 
 app.get("/douban", async (req, res) => {
     let data
-    if (req.query.t) {
-        switch (req.query.t) {
+    if (req.query.c) {
+        switch (req.query.c) {
             case "literature":
                 data = await readJSON(`${__dirname}/results/douban_literature.json`)
                 break
