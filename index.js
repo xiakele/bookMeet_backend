@@ -17,8 +17,8 @@ async function readJSON(fileDir) {
 
 app.listen(port, () => {
     console.log(chalk.inverse(`https://api.bookmeet.tk running at http://127.0.0.1:${port}\n`))
-    startScrapers()
     setInterval(startScrapers, 21600000)
+    startScrapers()
 })
 
 app.get("/", (req, res) => {
