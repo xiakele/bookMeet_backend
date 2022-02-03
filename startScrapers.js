@@ -13,7 +13,7 @@ async function checkUpdate(func, name) {
     try {
         updateTime = JSON.parse(await fs.readFile(`${__dirname}/results/${name}.json`)).time
         if (new Date().getTime() - updateTime < 10800000) {
-            console.log(chalk.green(`${name} is up to date`))
+            console.log(`${name} is up to date`)
             success += 1
             return
         }
@@ -22,7 +22,7 @@ async function checkUpdate(func, name) {
     }
     try {
         await func()
-        console.log(chalk.green(`${name} updated successfully at ${new Date()}`))
+        console.log(`${name} updated successfully at ${new Date()}`)
         success += 1
     } catch (err) {
         if (tried) {
