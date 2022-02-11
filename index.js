@@ -1,4 +1,5 @@
 const chalk = require("chalk")
+const cors = require("cors")
 const express = require("express")
 const app = express()
 const fs = require("fs").promises
@@ -14,6 +15,8 @@ async function readJSON(fileDir) {
         return { "category": category, "time": -1, "data": [] }
     }
 }
+
+app.use(cors({ origin: /https:\/\/(.*\.)?bookmeet\.tk$/ }))
 
 app.listen(port, () => {
     console.log(chalk.inverse(`https://api.bookmeet.tk running at http://127.0.0.1:${port}\n`))
