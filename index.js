@@ -85,6 +85,9 @@ app.get("/search", async (req, res) => {
     } else {
         try {
             data = await search(req.query.q)
+            if (req.query.n) {
+                data.data = data.data.slice(0, parseInt(req.query.n))
+            }
             res.json(data)
         } catch (err) {
             res.json({ "category": "search", time: "-1", "data": [] })
