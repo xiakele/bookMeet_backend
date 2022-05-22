@@ -2,7 +2,7 @@ const puppeteer = require("puppeteer")
 
 async function getBooks(page) {
     if (! await page.$(".result-list > .result")) {
-        throw new Error("cannot find target element")
+        return []
     }
     return page.$$eval(".result-list > .result", items => items.map(item => {
         const name = item.querySelector(".nbg").title
