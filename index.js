@@ -5,6 +5,7 @@ const app = express()
 const fs = require("fs").promises
 const port = 3030
 const startScrapers = require(`${__dirname}/startScrapers`)
+const search = require(`${__dirname}/scrapers/search`)
 
 async function readJSON(fileDir) {
     const category = /.*\/(.*).json$/.exec(fileDir)[1]
@@ -76,4 +77,18 @@ app.get("/bookschina", async (req, res) => {
         data.data = data.data.slice(0, parseInt(req.query.n))
     }
     res.json(data)
+})
+
+app.get("/search", async (req, res) => {
+    if (!req.query.q) {
+        res.json({ "category": "search", time: "-1", "data": [] })
+    } else {
+        try {
+            data = await search(req.query.q)
+            res.json(data)
+        } catch (err) {
+            res.json({ "category": "search", time: "-1", "data": [] })
+            console.log(chalk.bgRed(`an error occured while searching for ${req.query.q}\n${err}\n`))
+        }
+    }
 })
