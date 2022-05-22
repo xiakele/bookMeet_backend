@@ -88,7 +88,7 @@ app.get("/search", async (req, res) => {
             res.json(data)
         } catch (err) {
             res.json({ "category": "search", time: "-1", "data": [] })
-            console.log(chalk.bgRed(`an error occured while searching for ${req.query.q}\n${err}\n`))
+            console.log(chalk.bgRed(`an error occured while searching for "${req.query.q}"\n${err}\n`))
         }
     }
 })
