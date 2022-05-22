@@ -6,7 +6,7 @@ async function getBooks(page) {
     }
     return page.$$eval(".result-list > .result", items => items.map(item => {
         const name = item.querySelector(".nbg").title
-        const author = item.querySelector(".subject-cast").innerHTML.split(" / ")[0]
+        const author = item.querySelector(".subject-cast") ? item.querySelector(".subject-cast").innerHTML.split(" / ")[0] : ""
         const img = item.querySelector("img").src
         const rate = item.querySelector(".rating_nums") ? Number.parseFloat(item.querySelector(".rating_nums").innerHTML) : 0
         const url = item.querySelector(".nbg").href
