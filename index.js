@@ -6,6 +6,7 @@ const fs = require("fs").promises
 const port = 3030
 const startScrapers = require(`${__dirname}/startScrapers`)
 const search = require(`${__dirname}/scrapers/search`)
+const getSub = require(`${__dirname}/scrapers/getSub.js`)
 
 async function readJSON(fileDir) {
     const category = /.*\/(.*).json$/.exec(fileDir)[1]
@@ -92,6 +93,20 @@ app.get("/search", async (req, res) => {
         } catch (err) {
             res.json({ "category": "search", time: -1, "data": [] })
             console.log(chalk.bgRed(`an error occured while searching for "${req.query.q}"\n${err}\n`))
+        }
+    }
+})
+
+app.get("/getsub", async (req, res) => {
+    if (!(req.query.id || req.query.idd)) {
+        res.json({ "category": "getSub", time: "-1", "data": [] })
+    } else {
+        try {
+            data = await getSub(req.query.id, req.query.idd)
+            res.json(data)
+        } catch (err) {
+            res.json({ "category": "getSub", time: -1, "data": [], "id": req.query.idd * 1 })
+            console.log(chalk.bgRed(`an error occured while fetching subjects for "${req.query.q}"\n${err}\n`))
         }
     }
 })
