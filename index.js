@@ -64,8 +64,8 @@ app.get("/dangdang", async (req, res) => {
     res.json(data)
 })
 
-app.get("/jd", async (req, res) => {
-    data = await readJSON(`${__dirname}/results/jd.json`)
+app.get("/chaoxing", async (req, res) => {
+    data = await readJSON(`${__dirname}/results/chaoxing.json`)
     if (req.query.n) {
         data.data = data.data.slice(0, parseInt(req.query.n))
     }

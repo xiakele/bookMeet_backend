@@ -5,7 +5,7 @@ const douban_literature = require(`${__dirname}/scrapers/douban_literature`)
 const douban_novel = require(`${__dirname}/scrapers/douban_novel`)
 const douban_science = require(`${__dirname}/scrapers/douban_science`)
 const dangdang = require(`${__dirname}/scrapers/dangdang`)
-const jd = require(`${__dirname}/scrapers/jd`)
+const chaoxing = require(`${__dirname}/scrapers/chaoxing`)
 const booksChina = require(`${__dirname}/scrapers/booksChina`)
 let success = 0, failed = 0, tried = false
 
@@ -17,7 +17,7 @@ async function checkUpdate(func, name) {
             success += 1
             return
         }
-    }catch {
+    } catch {
         await fs.writeFile(`${__dirname}/results/${name}.json`, JSON.stringify({ "category": name, "time": -1, "data": [] }))
     }
     try {
@@ -27,7 +27,7 @@ async function checkUpdate(func, name) {
     } catch (err) {
         if (tried) {
             console.log(chalk.bgRed(`${name} update failed\n${err}`))
-            tried=false
+            tried = false
             failed += 1
         } else {
             console.log(chalk.yellow(`${name} update failed\n${err}\nretrying...`))
@@ -53,8 +53,8 @@ module.exports = async function startScrapers() {
     await checkUpdate(douban_novel, "douban_novel")
     await checkUpdate(douban_science, "douban_science")
     await checkUpdate(dangdang, "dangdang")
-    await checkUpdate(jd, "jd")
-    await checkUpdate(booksChina,"booksChina")
+    await checkUpdate(chaoxing, "chaoxing")
+    await checkUpdate(booksChina, "booksChina")
     end = new Date()
     if (failed) {
         console.log(chalk.bgYellow.black(`end updating with errors at ${end}\nsuccess: ${success}, failed: ${failed}\ntime total: ${(end.getTime() - start.getTime()) / 1000} seconds\n`))
