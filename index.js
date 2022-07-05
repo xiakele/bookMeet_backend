@@ -82,7 +82,7 @@ app.get("/bookschina", async (req, res) => {
 
 app.get("/search", async (req, res) => {
     if (!req.query.q) {
-        res.json({ "category": "search", time: "-1", "data": [] })
+        res.json({ "category": "search", "time": "-1", "data": [] })
     } else {
         try {
             data = await search(req.query.q)
@@ -91,7 +91,7 @@ app.get("/search", async (req, res) => {
             }
             res.json(data)
         } catch (err) {
-            res.json({ "category": "search", time: -1, "data": [] })
+            res.json({ "category": "search", "time": -1, "data": [] })
             console.log(chalk.bgRed(`an error occured while searching for "${req.query.q}"\n${err}\n`))
         }
     }
@@ -99,7 +99,7 @@ app.get("/search", async (req, res) => {
 
 app.get("/gettags", async (req, res) => {
     if (!(req.query.id || req.query.idd)) {
-        res.json({ "category": "getTags", time: -1, "data": [], "id": req.query.idd * 1 })
+        res.json({ "category": "getTags", "time": -1, "data": [], "id": req.query.idd * 1 })
     } else {
         try {
             data = await getTags(req.query.id, req.query.idd)
@@ -108,8 +108,10 @@ app.get("/gettags", async (req, res) => {
             }
             res.json(data)
         } catch (err) {
-            res.json({ "category": "getTags", time: -1, "data": [], "id": req.query.idd * 1 })
-            console.log(chalk.bgRed(`an error occured while fetching tags for "${req.query.id}"\n${err}\n`))
+            res.json({ "category": "getTags", "time": -1, "data": [], "id": req.query.idd * 1 })
+            if (err.name != "TypeError") {
+                console.log(chalk.bgRed(`an error occured while fetching tags for bookID ${req.query.id}\n${err}\n`))
+            }
         }
     }
 })
