@@ -12,7 +12,7 @@
 |   豆瓣搜索书目   |   /search   |
 | 豆瓣获取书籍标签 |  /gettags   |
 |  当当新书热卖榜  |  /dangdang  |
-|  京东图书销量榜  |     /jd     |
+|  超星图书好书榜  |  /chaoxing  |
 | 中图网图书畅销榜 | /bookschina |
 
 ## 支持的参数
