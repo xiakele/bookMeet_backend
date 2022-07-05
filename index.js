@@ -6,7 +6,7 @@ const fs = require("fs").promises
 const port = 3030
 const startScrapers = require(`${__dirname}/startScrapers`)
 const search = require(`${__dirname}/scrapers/search`)
-const getSub = require(`${__dirname}/scrapers/getSub.js`)
+const getTags = require(`${__dirname}/scrapers/getTags.js`)
 
 async function readJSON(fileDir) {
     const category = /.*\/(.*).json$/.exec(fileDir)[1]
@@ -97,16 +97,19 @@ app.get("/search", async (req, res) => {
     }
 })
 
-app.get("/getsub", async (req, res) => {
+app.get("/gettags", async (req, res) => {
     if (!(req.query.id || req.query.idd)) {
-        res.json({ "category": "getSub", time: "-1", "data": [] })
+        res.json({ "category": "getTags", time: -1, "data": [], "id": req.query.idd * 1 })
     } else {
         try {
-            data = await getSub(req.query.id, req.query.idd)
+            data = await getTags(req.query.id, req.query.idd)
+            if (req.query.n) {
+                data.data = data.data.slice(0, parseInt(req.query.n))
+            }
             res.json(data)
         } catch (err) {
-            res.json({ "category": "getSub", time: -1, "data": [], "id": req.query.idd * 1 })
-            console.log(chalk.bgRed(`an error occured while fetching subjects for "${req.query.q}"\n${err}\n`))
+            res.json({ "category": "getTags", time: -1, "data": [], "id": req.query.idd * 1 })
+            console.log(chalk.bgRed(`an error occured while fetching tags for "${req.query.id}"\n${err}\n`))
         }
     }
 })
