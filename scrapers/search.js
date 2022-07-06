@@ -1,5 +1,3 @@
-const puppeteer = require("puppeteer")
-
 async function getBooks(page) {
     if (! await page.$(".result-list > .result")) {
         return []
@@ -15,9 +13,7 @@ async function getBooks(page) {
     }))
 }
 
-module.exports = async function start(query) {
-    const browser = await puppeteer.launch()
-    const page = await browser.newPage()
+module.exports = async function start({ page, data: { query } }) {
     try {
         await page.goto(`https://www.douban.com/search?cat=1001&q=${query}`, { waitUntil: "domcontentloaded" })
         let books = await getBooks(page)
@@ -25,7 +21,5 @@ module.exports = async function start(query) {
         return { "category": "search", "time": updateTime, "data": books }
     } catch (err) {
         throw err
-    } finally {
-        await browser.close()
     }
 }

@@ -1,4 +1,3 @@
-const puppeteer = require("puppeteer")
 const fs = require("fs").promises
 async function getBooks(page) {
     if (! await page.$(".bang_list>li")) {
@@ -14,9 +13,7 @@ async function getBooks(page) {
         return json
     }))
 }
-module.exports = async function start() {
-    const browser = await puppeteer.launch()
-    const page = await browser.newPage()
+module.exports = async function start({ page }) {
     try {
         let books = []
         await page.goto(`http://bang.dangdang.com/books/newhotsales/01.00.00.00.00.00-24hours-0-0-1-1`)
@@ -28,9 +25,8 @@ module.exports = async function start() {
         updateTime = new Date().getTime()
         books = { "category": "dangdang", "time": updateTime, "data": books }
         await fs.writeFile(`${__dirname}/../results/dangdang.json`, JSON.stringify(books))
+        console.log(`dangdang updated successfully at ${new Date()}`)
     } catch (err) {
         throw err
-    } finally {
-        await browser.close()
     }
 }

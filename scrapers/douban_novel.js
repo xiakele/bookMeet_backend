@@ -1,4 +1,3 @@
-const puppeteer = require("puppeteer")
 const fs = require("fs").promises
 async function getBooks(page) {
     if (! await page.$(".chart-dashed-list>li")) {
@@ -14,9 +13,7 @@ async function getBooks(page) {
         return json
     }))
 }
-module.exports = async function start() {
-    const browser = await puppeteer.launch()
-    const page = await browser.newPage()
+module.exports = async function start({ page }) {
     try {
         let books = []
         await page.goto("https://book.douban.com/latest?subcat=%E5%B0%8F%E8%AF%B4")
@@ -33,9 +30,8 @@ module.exports = async function start() {
         updateTime = new Date().getTime()
         books = { "category": "douban_novel", "time": updateTime, "data": books }
         await fs.writeFile(`${__dirname}/../results/douban_novel.json`, JSON.stringify(books))
+        console.log(`douban_novel updated successfully at ${new Date()}`)
     } catch (err) {
         throw err
-    } finally {
-        await browser.close()
     }
 }
