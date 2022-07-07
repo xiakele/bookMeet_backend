@@ -23,9 +23,8 @@ module.exports = async function getTags({ page, data: { id, reqNum } }) {
                 return validTags
             })
         updateTime = new Date().getTime()
-        let data = { "category": "getTags", "time": updateTime, "data": tags, "id": reqNum * 1 }
-        await fs.writeFile(`${__dirname}/../results/tags/${id}.json`, JSON.stringify(data))
-        return data
+        await fs.writeFile(`${__dirname}/../results/tags/${id}.json`, JSON.stringify({ "time": updateTime, "data": tags }))
+        return { "category": "getTags", "time": updateTime, "data": tags, "id": reqNum * 1 }
     } catch (err) {
         throw err
     }

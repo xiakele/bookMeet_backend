@@ -35,7 +35,7 @@ async function start() {
     })
 
     app.get("/douban", async (req, res) => {
-        let data
+        let data = {}
         if (req.query.c) {
             switch (req.query.c) {
                 case "literature":
@@ -61,6 +61,7 @@ async function start() {
     })
 
     app.get("/dangdang", async (req, res) => {
+        let data = {}
         data = await readJSON(`${__dirname}/results/dangdang.json`)
         if (req.query.n) {
             data.data = data.data.slice(0, parseInt(req.query.n))
@@ -69,6 +70,7 @@ async function start() {
     })
 
     app.get("/chaoxing", async (req, res) => {
+        let data = {}
         data = await readJSON(`${__dirname}/results/chaoxing.json`)
         if (req.query.n) {
             data.data = data.data.slice(0, parseInt(req.query.n))
@@ -77,6 +79,7 @@ async function start() {
     })
 
     app.get("/bookschina", async (req, res) => {
+        let data = {}
         data = await readJSON(`${__dirname}/results/booksChina.json`)
         if (req.query.n) {
             data.data = data.data.slice(0, parseInt(req.query.n))
@@ -85,6 +88,7 @@ async function start() {
     })
 
     app.get("/search", async (req, res) => {
+        let data = {}
         if (!req.query.q) {
             res.json({ "category": "search", "time": "-1", "data": [] })
         } else {
@@ -102,12 +106,14 @@ async function start() {
     })
 
     app.get("/gettags", async (req, res) => {
+        let data = {}
         if (!(req.query.id && req.query.idd)) {
             res.json({ "category": "getTags", "time": -1, "data": [], "id": req.query.idd * 1 })
         } else {
             try {
                 try {
-                    data = JSON.parse(await fs.readFile(`${__dirname}/results/tags/${req.query.id}.json`))
+                    const localData = JSON.parse(await fs.readFile(`${__dirname}/results/tags/${req.query.id}.json`))
+                    data = { "category": "getTags", "time": localData.time, "data": localData.data, "id": req.query.idd * 1 }
                 } catch {
                     data = await cluster.execute({ id: req.query.id, reqNum: req.query.idd }, getTags)
                 }
