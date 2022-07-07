@@ -10,7 +10,7 @@ const search = require(`${__dirname}/scrapers/search`)
 const getTags = require(`${__dirname}/scrapers/getTags.js`)
 
 async function start() {
-    const cluster = await Cluster.launch({ concurrency: Cluster.CONCURRENCY_PAGE, maxConcurrency: 10, retryLimit: 1 })
+    const cluster = await Cluster.launch({ concurrency: Cluster.CONCURRENCY_PAGE, maxConcurrency: 10, retryLimit: 1, puppeteerOptions: { headless: false } })
 
     async function readJSON(fileDir) {
         const category = /.*\/(.*).json$/.exec(fileDir)[1]
@@ -102,7 +102,7 @@ async function start() {
     })
 
     app.get("/gettags", async (req, res) => {
-        if (!(req.query.id || req.query.idd)) {
+        if (!(req.query.id && req.query.idd)) {
             res.json({ "category": "getTags", "time": -1, "data": [], "id": req.query.idd * 1 })
         } else {
             try {

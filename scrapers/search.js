@@ -15,7 +15,10 @@ async function getBooks(page) {
 
 module.exports = async function start({ page, data: { query } }) {
     try {
-        await page.goto(`https://www.douban.com/search?cat=1001&q=${query}`, { waitUntil: "domcontentloaded" })
+        const statCode = (await page.goto(`https://www.douban.com/search?cat=1001&q=${query}`, { waitUntil: "domcontentloaded" })).status()
+        if (statCode == 403) {
+            throw new Error("access to douban is restricted")
+        }
         let books = await getBooks(page)
         updateTime = new Date().getTime()
         return { "category": "search", "time": updateTime, "data": books }

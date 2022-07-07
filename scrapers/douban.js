@@ -16,7 +16,10 @@ async function getBooks(page) {
 module.exports = async function start({ page }) {
     try {
         let books = []
-        await page.goto(`https://book.douban.com/latest?tag=%E5%85%A8%E9%83%A8`)
+        const statCode = (await page.goto(`https://book.douban.com/latest?tag=%E5%85%A8%E9%83%A8`)).status()
+        if (statCode == 403) {
+            throw new Error("access to douban is restricted")
+        }
         let pageCnt = 1
         try {
             pageCnt = await page.$eval(".paginator>:nth-last-child(2)", item => Number(item.innerHTML))

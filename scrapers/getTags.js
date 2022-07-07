@@ -1,6 +1,13 @@
 module.exports = async function getTags({ page, data: { id, reqNum } }) {
     try {
-        await page.goto(`https://www.douban.com/subject/${id}/`, { waitUntil: "domcontentloaded" })
+        const statCode = (await page.goto(`https://www.douban.com/subject/${id}/`, { waitUntil: "domcontentloaded" })).status()
+        if (statCode >= 300 || statCode < 200) {
+            if (statCode == 403) {
+                throw new Error("access to douban is restricted")
+
+            }
+            return { "category": "getTags", "time": -1, "data": [], "id": reqNum * 1 }
+        }
         let tags = await page.waitForRequest(req => req.url().includes("erebor.douban.com"))
             .then(data => /crtr=7:(.*)\|3:/.exec(decodeURIComponent(data.url()))[1])
             .then(str => str.split("|7:"))
