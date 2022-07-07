@@ -9,18 +9,18 @@ const startScrapers = require(`${__dirname}/startScrapers`)
 const search = require(`${__dirname}/scrapers/search`)
 const getTags = require(`${__dirname}/scrapers/getTags.js`)
 
+async function readJSON(fileDir) {
+    const category = /.*\/(.*).json$/.exec(fileDir)[1]
+    try {
+        return JSON.parse(await fs.readFile(fileDir))
+    } catch (err) {
+        console.log(chalk.bgRed(`an error occured while reading ${fileDir}\n${err}\n`))
+        return { "category": category, "time": -1, "data": [] }
+    }
+}
+
 async function start() {
     const cluster = await Cluster.launch({ concurrency: Cluster.CONCURRENCY_PAGE, maxConcurrency: 10, retryLimit: 1 })
-
-    async function readJSON(fileDir) {
-        const category = /.*\/(.*).json$/.exec(fileDir)[1]
-        try {
-            return JSON.parse(await fs.readFile(fileDir))
-        } catch (err) {
-            console.log(chalk.bgRed(`an error occured while reading ${fileDir}\n${err}\n`))
-            return { "category": category, "time": -1, "data": [] }
-        }
-    }
 
     app.use(cors({ origin: /https:\/\/(.*\.)?bookmeet\.tk$/ }))
 

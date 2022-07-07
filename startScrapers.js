@@ -9,6 +9,15 @@ const chaoxing = require(`${__dirname}/scrapers/chaoxing`)
 const booksChina = require(`${__dirname}/scrapers/booksChina`)
 const total = 7
 
+function onError(err, name, willRetry) {
+    if (willRetry) {
+        console.log(chalk.yellow(`${name} update failed\n${err}\nretrying...`))
+    } else {
+        console.log(chalk.bgRed(`${name} update failed\n${err}`))
+        failed++
+    }
+}
+
 module.exports = async function startScrapers(cluster) {
     failed = 0
     try {
@@ -23,15 +32,6 @@ module.exports = async function startScrapers(cluster) {
             await fs.mkdir(`${__dirname}/results/tags`)
         }
     }
-    const onError = (err, name, willRetry) => {
-        if (willRetry) {
-            console.log(chalk.yellow(`${name} update failed\n${err}\nretrying...`))
-        } else {
-            console.log(chalk.bgRed(`${name} update failed\n${err}`))
-            failed++
-        }
-    }
-    cluster.on("taskerror", onError)
     async function checkUpdate(func, name) {
         try {
             updateTime = JSON.parse(await fs.readFile(`${__dirname}/results/${name}.json`)).time
@@ -44,6 +44,7 @@ module.exports = async function startScrapers(cluster) {
         }
         cluster.queue(name, func)
     }
+    cluster.on("taskerror", onError)
     start = new Date()
     console.log(chalk.bgBlue(`start updating at ${start}`))
     await checkUpdate(douban, "douban")
@@ -55,10 +56,10 @@ module.exports = async function startScrapers(cluster) {
     await checkUpdate(booksChina, "booksChina")
     await cluster.idle()
     end = new Date()
+    cluster.off("taskerror", onError)
     if (failed) {
         console.log(chalk.bgYellow.black(`end updating with errors at ${end}\nsuccess: ${total - failed}, failed: ${failed}\ntime total: ${(end.getTime() - start.getTime()) / 1000} seconds\n`))
     } else {
         console.log(chalk.bgGreen.black(`end updating successfully at ${end}\ntime total: ${(end.getTime() - start.getTime()) / 1000} seconds\n`))
     }
-    cluster.off("taskerror", onError)
 }
