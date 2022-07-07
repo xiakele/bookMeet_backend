@@ -1,3 +1,4 @@
+const fs = require("fs").promises
 module.exports = async function getTags({ page, data: { id, reqNum } }) {
     try {
         const statCode = (await page.goto(`https://www.douban.com/subject/${id}/`, { waitUntil: "domcontentloaded" })).status()
@@ -21,7 +22,9 @@ module.exports = async function getTags({ page, data: { id, reqNum } }) {
                 return validTags
             })
         updateTime = new Date().getTime()
-        return { "category": "getTags", "time": updateTime, "data": tags, "id": reqNum * 1 }
+        let data = { "category": "getTags", "time": updateTime, "data": tags, "id": reqNum * 1 }
+        await fs.writeFile(`${__dirname}/../results/tags/${id}.json`, JSON.stringify(data))
+        return data
     } catch (err) {
         throw err
     }

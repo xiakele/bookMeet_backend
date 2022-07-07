@@ -12,10 +12,16 @@ const total = 7
 module.exports = async function startScrapers(cluster) {
     failed = 0
     try {
-        await fs.stat(`${__dirname}/results`)
+        await fs.stat(`${__dirname}/results/tags`)
     } catch {
-        console.log(chalk.bgYellow.black("cannot find \"results\" directory\ncreating it..."))
-        await fs.mkdir(`${__dirname}/results`)
+        console.log(chalk.bgYellow.black("cannot find \"results/tags\" directory\ncreating it..."))
+        try {
+            await fs.mkdir(`${__dirname}/results/tags`)
+        } catch {
+            console.log(chalk.bgYellow.black("cannot find \"results\" directory\ncreating it..."))
+            await fs.mkdir(`${__dirname}/results/`)
+            await fs.mkdir(`${__dirname}/results/tags`)
+        }
     }
     const onError = (err, name, willRetry) => {
         if (willRetry) {
