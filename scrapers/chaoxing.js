@@ -1,4 +1,5 @@
 const fs = require("fs").promises
+
 async function getBooks(page) {
     if (! await page.$(".good_text")) {
         throw new Error("cannot find target element")
@@ -13,6 +14,7 @@ async function getBooks(page) {
         return json
     }))
 }
+
 module.exports = async function start({ page }) {
     try {
         let books = []

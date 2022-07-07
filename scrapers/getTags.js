@@ -1,4 +1,5 @@
 const fs = require("fs").promises
+
 module.exports = async function getTags({ page, data: { id, reqNum } }) {
     try {
         const statCode = (await page.goto(`https://www.douban.com/subject/${id}/`, { waitUntil: "domcontentloaded" })).status()
