@@ -61,7 +61,7 @@ async function start() {
     app.get("/search", async (req, res) => {
         let data = {}
         if (!req.query.q) {
-            return res.status(400).json({ "category": "search", "time": "-1", "data": [] })
+            return res.status(400).json({ "category": "search", "time": -1, "data": [] })
         }
         try {
             data = await cluster.execute({ query: req.query.q }, search)
