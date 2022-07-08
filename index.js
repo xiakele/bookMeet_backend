@@ -34,99 +34,81 @@ async function start() {
         res.send("Welcome to api.bookmeet.tk!")
     })
 
-    app.get("/douban", async (req, res) => {
+    app.get(["/douban", "/dangdang", "/chaoxing", "/bookschina"], async (req, res) => {
+        const subCats = ["literature", "novel", "science"]
         let data = {}
         if (req.query.c) {
-            switch (req.query.c) {
-                case "literature":
-                    data = await readJSON(`${__dirname}/results/douban_literature.json`)
-                    break
-                case "novel":
-                    data = await readJSON(`${__dirname}/results/douban_novel.json`)
-                    break
-                case "science":
-                    data = await readJSON(`${__dirname}/results/douban_science.json`)
-                    break
-                default:
-                    data = await readJSON(`${__dirname}/results/douban.json`)
-                    break
+            if (req.path == "/douban" && subCats.indexOf(req.query.c) != -1) {
+                data = await readJSON(`${__dirname}/results/douban_${req.query.c}.json`)
+            } else {
+                return res.status(400).json({ "category": req.path.slice(1), "time": -1, "data": [] })
             }
         } else {
-            data = await readJSON(`${__dirname}/results/douban.json`)
+            data = await readJSON(`${__dirname}/results/${req.path.slice(1)}.json`)
         }
         if (req.query.n) {
-            data.data = data.data.slice(0, parseInt(req.query.n))
+            if (isNaN(req.query.n * 1)) {
+                return res.status(400).json({ "category": req.path.slice(1), "time": -1, "data": [] })
+            }
+            data.data = data.data.slice(0, req.query.n * 1)
         }
-        res.json(data)
-    })
-
-    app.get("/dangdang", async (req, res) => {
-        let data = {}
-        data = await readJSON(`${__dirname}/results/dangdang.json`)
-        if (req.query.n) {
-            data.data = data.data.slice(0, parseInt(req.query.n))
+        if (data.time == -1) {
+            return res.status(500).json(data)
         }
-        res.json(data)
-    })
-
-    app.get("/chaoxing", async (req, res) => {
-        let data = {}
-        data = await readJSON(`${__dirname}/results/chaoxing.json`)
-        if (req.query.n) {
-            data.data = data.data.slice(0, parseInt(req.query.n))
-        }
-        res.json(data)
-    })
-
-    app.get("/bookschina", async (req, res) => {
-        let data = {}
-        data = await readJSON(`${__dirname}/results/booksChina.json`)
-        if (req.query.n) {
-            data.data = data.data.slice(0, parseInt(req.query.n))
-        }
-        res.json(data)
+        return res.json(data)
     })
 
     app.get("/search", async (req, res) => {
         let data = {}
         if (!req.query.q) {
-            res.json({ "category": "search", "time": "-1", "data": [] })
-        } else {
-            try {
-                data = await cluster.execute({ query: req.query.q }, search)
-                if (req.query.n) {
-                    data.data = data.data.slice(0, parseInt(req.query.n))
+            return res.status(400).json({ "category": "search", "time": "-1", "data": [] })
+        }
+        try {
+            data = await cluster.execute({ query: req.query.q }, search)
+            if (req.query.n) {
+                if (isNaN(req.query.n * 1)) {
+                    return res.status(400).json({ "category": req.path.slice(1), "time": -1, "data": [] })
                 }
-                res.json(data)
-            } catch (err) {
-                res.json({ "category": "search", "time": -1, "data": [] })
-                console.log(chalk.bgRed(`an error occured while searching for "${req.query.q}"\n${err}\n`))
+                data.data = data.data.slice(0, req.query.n * 1)
             }
+            if (data.data.length == 0) {
+                return res.status(404).json(data)
+            }
+            return res.json(data)
+        } catch (err) {
+            console.log(chalk.bgRed(`an error occured while searching for "${req.query.q}"\n${err}\n`))
+            return res.status(500).json({ "category": "search", "time": -1, "data": [] })
         }
     })
 
     app.get("/gettags", async (req, res) => {
         let data = {}
-        if (!(req.query.id && req.query.idd)) {
-            res.json({ "category": "getTags", "time": -1, "data": [], "id": req.query.idd * 1 })
-        } else {
+        if (isNaN(req.query.id * 1) || isNaN(req.query.idd * 1)) {
+            return res.status(400).json({ "category": "getTags", "time": -1, "data": [], "id": req.query.idd * 1 })
+        }
+        try {
             try {
-                try {
-                    const localData = JSON.parse(await fs.readFile(`${__dirname}/results/tags/${req.query.id}.json`))
-                    data = { "category": "getTags", "time": localData.time, "data": localData.data, "id": req.query.idd * 1 }
-                } catch {
-                    data = await cluster.execute({ id: req.query.id, reqNum: req.query.idd }, getTags)
-                }
-                if (req.query.n) {
-                    data.data = data.data.slice(0, parseInt(req.query.n))
-                }
-                res.json(data)
-            } catch (err) {
-                res.json({ "category": "getTags", "time": -1, "data": [], "id": req.query.idd * 1 })
-                if (err.name != "TypeError") {
-                    console.log(chalk.bgRed(`an error occured while fetching tags for bookID ${req.query.id}\n${err}\n`))
-                }
+                const localData = JSON.parse(await fs.readFile(`${__dirname}/results/tags/${req.query.id}.json`))
+                data = { "category": "getTags", "time": localData.time, "data": localData.data, "id": req.query.idd * 1 }
+            } catch {
+                data = await cluster.execute({ id: req.query.id, reqNum: req.query.idd }, getTags)
             }
+            if (data.time == -1) {
+                return res.status(404).json(data)
+            }
+            if (req.query.n) {
+                if (isNaN(req.query.n * 1)) {
+                    return res.status(400).json({ "category": req.path.slice(1), "time": -1, "data": [] })
+                }
+                data.data = data.data.slice(0, req.query.n * 1)
+            }
+            return res.json(data)
+        } catch (err) {
+            if (err.name != "TypeError") {
+                console.log(chalk.bgRed(`an error occured while fetching tags for bookID ${req.query.id}\n${err}\n`))
+                return res.status(500).json({ "category": "getTags", "time": -1, "data": [], "id": req.query.idd * 1 })
+            }
+            return res.status(400).json({ "category": "getTags", "time": -1, "data": [], "id": req.query.idd * 1 })
         }
     })
 }

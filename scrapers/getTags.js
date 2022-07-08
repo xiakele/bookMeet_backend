@@ -3,10 +3,9 @@ const fs = require("fs").promises
 module.exports = async function getTags({ page, data: { id, reqNum } }) {
     try {
         const statCode = (await page.goto(`https://www.douban.com/subject/${id}/`, { waitUntil: "domcontentloaded" })).status()
-        if (statCode >= 300 || statCode < 200) {
+        if (statCode >= 400) {
             if (statCode == 403) {
                 throw new Error("access to douban is restricted")
-
             }
             return { "category": "getTags", "time": -1, "data": [], "id": reqNum * 1 }
         }
