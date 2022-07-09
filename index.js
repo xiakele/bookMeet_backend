@@ -22,6 +22,7 @@ async function readJSON(fileDir) {
 async function start() {
     const cluster = await Cluster.launch({ concurrency: Cluster.CONCURRENCY_PAGE, maxConcurrency: 10, retryLimit: 1 })
 
+    app.enable("case sensitive routing")
     app.use(cors({ origin: /https:\/\/(.*\.)?bookmeet\.tk$/ }))
 
     app.listen(port, () => {
@@ -34,7 +35,7 @@ async function start() {
         res.send("Welcome to api.bookmeet.tk!")
     })
 
-    app.get(["/douban", "/dangdang", "/chaoxing", "/bookschina"], async (req, res) => {
+    app.get(["/douban", "/dangdang", "/chaoxing", "/booksChina"], async (req, res) => {
         const subCats = ["literature", "novel", "science"]
         let data = {}
         if (req.query.c) {
@@ -110,6 +111,10 @@ async function start() {
             }
             return res.status(400).json({ "category": "getTags", "time": -1, "data": [], "id": req.query.idd * 1 })
         }
+    })
+
+    app.use((req, res, next) => {
+        res.status(403).send()
     })
 }
 
