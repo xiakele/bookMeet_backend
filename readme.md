@@ -10,10 +10,10 @@
 | :--------------: | :---------: |
 |   豆瓣新书速递   |   /douban   |
 |   豆瓣搜索书目   |   /search   |
-| 豆瓣获取书籍标签 |  /gettags   |
+| 豆瓣获取书籍标签 |  /getTags   |
 |  当当新书热卖榜  |  /dangdang  |
 |  超星图书好书榜  |  /chaoxing  |
-| 中图网图书畅销榜 | /bookschina |
+| 中图网图书畅销榜 | /booksChina |
 
 ## 支持的参数
 
@@ -39,12 +39,12 @@
 
 ### 例子
 
-- 获取中图网图书畅销榜的前5本：/bookschina?n=5
+- 获取中图网图书畅销榜的前5本：/booksChina?n=5
 
-- 获取豆瓣新书速递 - 文学的前10本：/douban?t=literature&n=10 或 /douban?n=10&t=literature
+- 获取豆瓣新书速递 - 文学的前10本：/douban?c=literature&n=10 或 /douban?n=10&c=literature
 
 - 豆瓣搜索“朝花夕拾”：/search?q=朝花夕拾
-- 查询书籍id为33420947（三体全集），请求id为1的标签：/getsub?id=33420947&idd=1
+- 查询书籍id为33420947（三体全集），请求id为1的标签：/getTags?id=33420947&idd=1
 
 ## 数据格式
 
@@ -119,4 +119,4 @@
 - "time" - Number类型，-1表示请求发生错误
 - "data" - Array类型，空数组
 
-特别地，当”豆瓣获取书籍标签“发生错误时，会额外返回"id"属性
+特别地，当”豆瓣获取书籍标签“发生错误时，会额外返回"id"属性，值为传入的"idd"参数
