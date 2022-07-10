@@ -11,7 +11,7 @@ const search = require(path.join(__dirname, '/scrapers/search'))
 const getTags = require(path.join(__dirname, '/scrapers/getTags'))
 
 async function readJSON (fileDir) {
-  const category = /.*\/(.*).json$/.exec(fileDir)[1]
+  const category = path.basename(fileDir, '.json')
   try {
     return JSON.parse(await fs.readFile(fileDir))
   } catch (err) {
