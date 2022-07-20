@@ -14,6 +14,7 @@ const total = 7
 let failed = 0
 
 module.exports = async function startScrapers (cluster) {
+  failed = 0
   function onError (err, name, willRetry) {
     if (willRetry) {
       console.log(chalk.yellow(`${name} update failed\n${err}\nretrying...`))
