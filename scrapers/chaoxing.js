@@ -5,6 +5,7 @@ async function getBooks (page) {
   if (!await page.$('.good_text')) {
     throw new Error('cannot find target element')
   }
+  await page.waitForFunction('document.querySelectorAll(".good_text .score_num > span").length===16', { timeout: 5000 })
   return page.$$eval('.good_text', items => items.map(item => {
     const name = item.querySelector('h3 > a').title
     const author = item.querySelector('br+p').innerHTML
@@ -18,7 +19,7 @@ async function getBooks (page) {
 
 module.exports = async function start ({ page }) {
   let books = []
-  await page.goto('http://book.chaoxing.com/')
+  await page.goto('http://book.chaoxing.com/', { waitUntil: 'domcontentloaded' })
   books = await getBooks(page)
   const updateTime = new Date().getTime()
   books = { category: 'chaoxing', time: updateTime, data: books }
