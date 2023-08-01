@@ -21,7 +21,7 @@ async function readJSON (fileDir) {
 }
 
 async function start () {
-  const cluster = await Cluster.launch({ concurrency: Cluster.CONCURRENCY_PAGE, maxConcurrency: 10, retryLimit: 1 })
+  const cluster = await Cluster.launch({ concurrency: Cluster.CONCURRENCY_PAGE, maxConcurrency: 10, retryLimit: 1, puppeteerOptions: { headless: 'new' } })
 
   app.enable('case sensitive routing')
   app.use(cors({ origin: /https:\/\/(.*\.)?bookmeet\.tk$/ }))
