@@ -18,9 +18,9 @@ async function getBooks (page) {
 
 module.exports = async function start ({ page }) {
   let books = []
-  // await page.goto(`http://www.bookschina.com/24hour/1_0_1/`)
-  // const pageCnt = await page.$eval(".p-skip b", item => Number(item.innerHTML))
-  for (let i = 1; i <= 10; i++) {
+  await page.goto('http://www.bookschina.com/24hour/1_0_1/')
+  const pageCnt = await page.$eval('.p-skip b', item => item.innerHTML * 1)
+  for (let i = 1; i <= (pageCnt < 5 ? pageCnt : 5); i++) {
     await page.goto(`http://www.bookschina.com/24hour/1_0_${i}`, { waitUntil: 'domcontentloaded' })
     books = books.concat(await getBooks(page))
   }
