@@ -122,6 +122,8 @@ async function start () {
   app.use((req, res, next) => {
     res.status(403).send()
   })
+
+  process.on('SIGTERM', () => process.exit())
 }
 
 start()
