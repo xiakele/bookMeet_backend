@@ -2,11 +2,6 @@ const path = require('path')
 const fs = require('fs').promises
 const chalk = require('chalk')
 const douban = require(path.join(__dirname, '/scrapers/douban'))
-/* eslint-disable camelcase */
-const douban_literature = require(path.join(__dirname, '/scrapers/douban_literature'))
-const douban_novel = require(path.join(__dirname, '/scrapers/douban_novel'))
-const douban_science = require(path.join(__dirname, '/scrapers/douban_science'))
-/* eslint-enable camelcase */
 const dangdang = require(path.join(__dirname, '/scrapers/dangdang'))
 const chaoxing = require(path.join(__dirname, '/scrapers/chaoxing'))
 const booksChina = require(path.join(__dirname, '/scrapers/booksChina'))
@@ -23,7 +18,7 @@ module.exports = async function startScrapers (cluster) {
       failed++
     }
   }
-  async function checkUpdate (func, name) {
+  async function checkUpdate (func, name, data) {
     try {
       const updateTime = JSON.parse(await fs.readFile(path.join(__dirname, `/results/${name}.json`))).time
       if (new Date().getTime() - updateTime < 10800000) {
@@ -33,7 +28,7 @@ module.exports = async function startScrapers (cluster) {
     } catch {
       await fs.writeFile(path.join(__dirname, `/results/${name}.json`), JSON.stringify({ category: name, time: -1, data: [] }))
     }
-    cluster.queue(name, func)
+    cluster.queue(data, func)
   }
 
   try {
@@ -52,13 +47,13 @@ module.exports = async function startScrapers (cluster) {
   cluster.on('taskerror', onError)
   const start = new Date()
   console.log(chalk.bgBlue(`start updating at ${start}`))
-  await checkUpdate(douban, 'douban')
-  await checkUpdate(douban_literature, 'douban_literature')
-  await checkUpdate(douban_novel, 'douban_novel')
-  await checkUpdate(douban_science, 'douban_science')
-  await checkUpdate(dangdang, 'dangdang')
-  await checkUpdate(chaoxing, 'chaoxing')
-  await checkUpdate(booksChina, 'booksChina')
+  await checkUpdate(douban, 'douban', '全部')
+  await checkUpdate(douban, 'douban', '文学')
+  await checkUpdate(douban, 'douban', '小说')
+  await checkUpdate(douban, 'douban', '科学新知')
+  // await checkUpdate(dangdang, 'dangdang')
+  // await checkUpdate(chaoxing, 'chaoxing')
+  // await checkUpdate(booksChina, 'booksChina')
   await cluster.idle()
   const end = new Date()
   cluster.off('taskerror', onError)
